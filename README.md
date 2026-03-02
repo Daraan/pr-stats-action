@@ -2,7 +2,9 @@
 
 Generate GitHub stats and pull request contribution cards in your GitHub Actions workflow, commit them to your profile repository, and embed them directly from there.
 
-> **Note:** This project is based on [readme-tools/github-readme-stats](https://github.com/readme-tools/github-readme-stats) with a focus on the `stats` card (extended with a profile avatar rank icon) and a custom `prs` card for visualising merged pull request contributions.
+> **Note:** This project is based on [readme-tools/github-readme-stats](https://github.com/readme-tools/github-readme-stats) and reuses some of their code, but does not provide all features.
+> It extends the `stats` card with a profile avatar rank icon option
+> and a custom `prs` card for visualising merged pull request contributions.
 
 ## Quick start
 
