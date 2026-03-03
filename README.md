@@ -1,11 +1,12 @@
 # GitHub Readme Stats Action
 
-Generate GitHub pull request contribution cards in your GitHub Actions workflow, commit them to your profile repository, and embed them directly from there.
+Generate GitHub pull request contribution cards in your GitHub Actions workflow, automatically commit them to your profile repository, and embed them directly from there.
+Run the action on a schedule to dynamically update your profile with your latest contribution stats.
 
 ## Quick start
 
 ```yaml
-name: Update README cards
+name: Update PR Stats for README
 
 on:
   schedule:
@@ -23,19 +24,20 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Generate PRs card
-        uses: Daraan/github-readme-stats-action
+        uses: Daraan/pr-stats-action@v1
         with:
           username: ${{ github.repository_owner }}
           theme: default
           path: profile/prs- # filename prefix; one SVG per org is generated
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # This automatically commits and updates the generated cards to your profile
       - name: Commit cards
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add profile/*.svg
-          git commit -m "Update README cards" || exit 0
+          git commit -m "Update PR cards" || exit 0
           git push
 ```
 
@@ -44,6 +46,8 @@ Then embed from your profile README:
 ```md
 ![PRs](./profile/prs-some-org.svg)
 ```
+
+For more advanced options see the [Examples](#examples) section as well as the [How to Use in your README.md](#how-to-use-in-your-readmemd) sections below.
 
 ## Inputs
 
@@ -162,6 +166,8 @@ GitHub supports multiple images, depending on the user's theme preference. You c
 </picture>
 ```
 
-## Notes
+## Disclaimer
 
-- The upstream stats card renderer is provided by [readme-tools/github-readme-stats](https://github.com/readme-tools/github-readme-stats).
+This repository started as a fork of [github-readme-stats-action](https://github.com/stats-organization/github-readme-stats-action) which makes use of [anuraghazra/github-readme-stats](https://github.com/stats-organization/github-readme-stats).
+Parts of the original code are still used; as well as all styles and themes of the base are automatically supported.
+This project is a standalone for PR cards only.
