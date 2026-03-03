@@ -1,10 +1,6 @@
 # GitHub Readme Stats Action
 
-Generate GitHub stats and pull request contribution cards in your GitHub Actions workflow, commit them to your profile repository, and embed them directly from there.
-
-> **Note:** This project is based on [readme-tools/github-readme-stats](https://github.com/readme-tools/github-readme-stats) and reuses some of their code, but does not provide all features.
-> It extends the `stats` card with a profile avatar rank icon option
-> and a custom `prs` card for visualising merged pull request contributions.
+Generate GitHub pull request contribution cards in your GitHub Actions workflow, commit them to your profile repository, and embed them directly from there.
 
 ## Quick start
 
@@ -26,20 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Generate stats card
-        # Erliest and first stable release that supports profile picture - might be deprecated to standalone later
-        uses: Daraan/github-readme-stats-action@2009edc011f4764bf09d2044726613ef1d4cfb00
-        with:
-          card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&rank_icon=profile
-          path: profile/stats.svg
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Generate PRs card
-        uses: Daraan/github-readme-stats-action # Use latest version for newest PRs features
+        uses: Daraan/github-readme-stats-action
         with:
-          card: prs
-          options: username=${{ github.repository_owner }}&theme=default
+          username: ${{ github.repository_owner }}
+          theme: default
           path: profile/prs- # filename prefix; one SVG per org is generated
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -55,13 +42,11 @@ jobs:
 Then embed from your profile README:
 
 ```md
-![Stats](./profile/stats.svg)
 ![PRs](./profile/prs-some-org.svg)
 ```
 
 ## Inputs
 
-- `card` (required): Card type. Supported: `stats`, `prs`.
 - `options`: Card options as a query string (`key=value&...`) or JSON. If `username` is omitted, the action uses the repository owner.
 - `path`: Output path for the SVG file. Defaults to `profile/<card>.svg`. For the `prs` card this is a filename prefix (one SVG per organisation).
 - `token`: GitHub token (PAT or `GITHUB_TOKEN`). For private repo stats, use a [PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `repo` and `read:user` scopes.
@@ -73,42 +58,43 @@ Then embed from your profile README:
     owner/OtherRepo: https://example.com/other-logo.svg
   ```
 
+Options can also be provided as individual inputs directly in the `with:` block. These take priority over the same keys in `options`:
+
+| Input           | Description                                     |
+| --------------- | ----------------------------------------------- |
+| `username`      | GitHub username                                 |
+| `theme`         | Card theme name                                 |
+| `title_color`   | Title hex color (without `#`)                   |
+| `text_color`    | Text hex color (without `#`)                    |
+| `icon_color`    | Icon hex color (without `#`)                    |
+| `bg_color`      | Background hex color (without `#`)              |
+| `border_color`  | Border hex color (without `#`)                  |
+| `hide_border`   | Hide the card border (`true`/`false`)           |
+| `border_radius` | Card border radius                              |
+| `exclude`       | Comma-separated repo name substrings to exclude |
+
 ## Examples
 
-### Stats card
-
-Renders the standard GitHub stats card. All upstream options from [github-readme-stats](https://github.com/readme-tools/github-readme-stats) are supported.
-
-```yaml
-with:
-  card: stats
-  options: username=octocat&show_icons=true&hide_rank=true&bg_color=0D1117
-  token: ${{ secrets.GITHUB_TOKEN }}
-```
-
-#### Profile rank icon
-
-Pass `rank_icon=profile` to embed the user's GitHub avatar inside the rank circle instead of the default GitHub logo. This is an extension specific to this action.
-
-```yaml
-with:
-  card: stats
-  options: username=octocat&rank_icon=profile
-  token: ${{ secrets.GITHUB_TOKEN }}
-```
-
-#### JSON options
-
-Options can also be provided as a JSON object:
-
-```yaml
-with:
-  card: stats
-  options: '{"username":"octocat","show_icons":true,"hide_rank":true}'
-  token: ${{ secrets.GITHUB_TOKEN }}
-```
-
 ### PRs card
+
+Using individual key inputs (recommended):
+
+```yaml
+with:
+  username: octocat
+  theme: github_dark
+  path: profile/prs-
+  token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Using the `options` query string (also valid; individual keys take priority if both are provided):
+
+```yaml
+with:
+  options: username=octocat&theme=github_dark
+  path: profile/prs-
+  token: ${{ secrets.GITHUB_TOKEN }}
+```
 
 The `prs` card generates one SVG per external organization (where the user has contributed merged PRs) and a separate SVG for the user's own non-fork repositories (prefixed with `own-`).
 For example, with `path: profile/prs-` the action generates files like:
@@ -143,7 +129,6 @@ The `prs` card supports the same theme and colour options (`theme`, `title_color
 Use `exclude` with a comma-separated list (e.g. `exclude=pydantic,foo`) to skip repos containing those terms.
 
 The `custom_images` input lets you override the avatar shown in PR cards for specific repositories or organizations. The action will check for a custom image in this order: full repo name (`owner/repo`), short repo name (`repo`), then org/user name. If no match is found, it falls back to the default avatar.
-
 
 ## Notes
 
