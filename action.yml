@@ -1,5 +1,5 @@
-name: GitHub Readme Stats Action
-description: Generate GitHub Readme Stats cards in GitHub Actions.
+name: GitHub PR Stats Action
+description: Generate stat card images about merged PR in GitHub Actions (aggregated by organization).
 author: readme-tools
 inputs:
   card:
