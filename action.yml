@@ -4,7 +4,8 @@ author: readme-tools
 inputs:
   card:
     description: Card type to generate (prs).
-    required: true
+    required: false
+    default: prs
   options:
     description: Options for the card (query string or JSON).
     required: false

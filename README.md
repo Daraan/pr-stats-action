@@ -25,7 +25,6 @@ jobs:
       - name: Generate PRs card
         uses: Daraan/github-readme-stats-action
         with:
-          card: prs
           username: ${{ github.repository_owner }}
           theme: default
           path: profile/prs- # filename prefix; one SVG per org is generated
@@ -48,7 +47,6 @@ Then embed from your profile README:
 
 ## Inputs
 
-- `card` (required): Card type. Supported: `prs`.
 - `options`: Card options as a query string (`key=value&...`) or JSON. If `username` is omitted, the action uses the repository owner.
 - `path`: Output path for the SVG file. Defaults to `profile/<card>.svg`. For the `prs` card this is a filename prefix (one SVG per organisation).
 - `token`: GitHub token (PAT or `GITHUB_TOKEN`). For a PAT, use one with `repo` and `read:user` scopes.
@@ -76,7 +74,6 @@ Using individual key inputs (recommended):
 
 ```yaml
 with:
-  card: prs
   username: octocat
   theme: github_dark
   path: profile/prs-
@@ -87,7 +84,6 @@ Using the `options` query string (also valid; individual keys take priority if b
 
 ```yaml
 with:
-  card: prs
   options: username=octocat&theme=github_dark
   path: profile/prs-
   token: ${{ secrets.GITHUB_TOKEN }}
