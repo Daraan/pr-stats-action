@@ -1,3 +1,10 @@
+<div align="center">
+
+![PRs At Python CPython](https://github.com/Daraan/Daraan/raw/main/profile/prs/light-python-cpython.svg)
+![PRs At Python CPython](https://github.com/Daraan/Daraan/raw/main/profile/prs/dark-python-cpython.svg)
+
+</div>
+
 # GitHub Readme Stats Action
 
 Generate GitHub pull request contribution cards in your GitHub Actions workflow, automatically commit them to your profile repository, and embed them directly from there.
