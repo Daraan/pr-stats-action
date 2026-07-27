@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@actions/core": "^2.0.1",
-    "github-readme-stats": "github:readme-tools/github-readme-stats"
+    "@stats-organization/github-readme-stats-core": "^2.1.5"
   },
   "devDependencies": {
     "husky": "^9.0.11",

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { Buffer } from "node:buffer";
-import { themes } from "github-readme-stats/themes/index.js";
+import { themes } from "@stats-organization/github-readme-stats-core";
 
 /**
  * @typedef {Object} OrgPRData
@@ -63,7 +63,7 @@ const languageIconUrl = (language) => {
 };
 
 /**
- * Language color from upstream github-readme-stats languageColors.json.
+ * Language color from upstream github-stats-extended languageColors.json.
  * Falls back to a neutral grey.
  * @param {string} language
  * @param {Record<string, string>} colorMap

@@ -62,7 +62,7 @@ For more advanced options see the [Examples](#examples) section as well as the [
 - `path`: Output path for the SVG file. Defaults to `profile/<card>.svg`. For the `prs` card this is a filename prefix (one SVG per organisation).
 - `token`: GitHub token (PAT or `GITHUB_TOKEN`). For private repo stats, use a [PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `repo` and `read:user` scopes.
 - `custom_images`: Custom image URLs for specific repositories, overriding the default owner avatar. Provide one mapping per line in `repo_name: image_url` format. The key can be a full repo name (`owner/repo`), a short repo name (`repo`), or an org/user login. Example:
-  
+
   ```yaml
   custom_images: |
     MyRepo: https://example.com/my-repo-logo.png
@@ -70,7 +70,7 @@ For more advanced options see the [Examples](#examples) section as well as the [
   ```
 
 Options can also be provided as individual inputs directly in the `with:` block. These take priority over the same keys in `options`.
-Style and theme settings of [github-readme-stats](https://github.com/stats-organization/github-readme-stats) are supported.
+Style and theme settings of [github-stats-extended](https://github.com/stats-organization/github-stats-extended) are supported.
 Please refer to their documentation for usage and examples; see also [Disclaimer](#disclaimer).
 
 | Input           | Description                                     |
@@ -137,7 +137,7 @@ with:
   token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-The `prs` card supports the same theme and colour options (`theme`, `title_color`, ...) as the other cards by github-readme-stats.
+The `prs` card supports the same theme and colour options (`theme`, `title_color`, ...) as the other cards by github-stats-extended.
 
 Use `exclude` with a comma-separated list (e.g. `exclude=pydantic,foo`) to skip repos containing those terms.
 
@@ -208,6 +208,6 @@ This will create three different differently themed images, prefixed with the th
 
 ## Disclaimer
 
-This repository started as a fork of [github-readme-stats-action](https://github.com/stats-organization/github-readme-stats-action) which makes use of [anuraghazra/github-readme-stats](https://github.com/stats-organization/github-readme-stats).
+This repository started as a fork of [github-readme-stats-action](https://github.com/stats-organization/github-readme-stats-action) which now targets [stats-organization/github-stats-extended](https://github.com/stats-organization/github-stats-extended).
 Parts of the original code are still used; as well as all styles and themes of the base are automatically supported.
 This project is a standalone for PR cards only.
