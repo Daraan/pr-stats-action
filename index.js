@@ -1,6 +1,7 @@
 import core from "@actions/core";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   fetchUserPRs,
   renderOrgCard,
@@ -145,9 +146,15 @@ const run = async () => {
     // Load language colours for fallback dots.
     let languageColors = {};
     try {
-      const colorsUrl = import.meta
-        .resolve("github-readme-stats/src/common/languageColors.json");
-      languageColors = JSON.parse(await readFile(new URL(colorsUrl), "utf8"));
+      const packageEntryUrl = import.meta
+        .resolve("@stats-organization/github-readme-stats-core");
+      const packageEntryPath = fileURLToPath(new URL(packageEntryUrl));
+      const colorsPath = path.resolve(
+        path.dirname(packageEntryPath),
+        "common",
+        "languageColors.json",
+      );
+      languageColors = JSON.parse(await readFile(colorsPath, "utf8"));
     } catch {
       // non-fatal
     }

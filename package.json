@@ -1,6 +1,6 @@
 {
   "name": "prs-stat-cards",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generate GitHub PR Stats cards in GitHub Actions",
   "type": "module",
   "main": "index.js",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@actions/core": "^2.0.1",
-    "github-readme-stats": "github:readme-tools/github-readme-stats"
+    "@stats-organization/github-readme-stats-core": "^2.1.5"
   },
   "devDependencies": {
     "husky": "^9.0.11",
