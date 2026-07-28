@@ -1,9 +1,9 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
-import { jest, test, beforeAll, afterAll } from "@jest/globals";
+import { jest, test, beforeAll, afterAll, expect } from "@jest/globals";
 
 jest.setTimeout(60_000);
 
@@ -38,9 +38,6 @@ const runCard = (card, options, output) =>
   });
 
 beforeAll(async () => {
-  if (!hasPat) {
-    return;
-  }
   buildDir = await mkdtemp(path.join(os.tmpdir(), "grs-action-"));
 });
 
@@ -50,10 +47,18 @@ afterAll(async () => {
   }
 });
 
-const e2eTest = hasPat ? test : test.skip;
+const prsE2eTest = hasPat ? test : test.skip;
 
-e2eTest("generates prs card locally", async () => {
+prsE2eTest("generates prs card locally", async () => {
   const prsPrefix = path.join(buildDir, "prs-");
 
   await runCard("prs", `username=${repoOwner}`, prsPrefix);
+});
+
+test("generates stats card locally", async () => {
+  const statsPath = path.join(buildDir, "stats.svg");
+
+  await runCard("stats", `username=${repoOwner}&show_icons=true`, statsPath);
+  const svg = await readFile(statsPath, "utf8");
+  expect(svg).toContain("<svg");
 });

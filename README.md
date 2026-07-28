@@ -7,7 +7,7 @@
 
 # GitHub Readme Stats Action
 
-Generate GitHub pull request contribution cards in your GitHub Actions workflow, automatically commit them to your profile repository, and embed them directly from there.
+Generate GitHub stats and pull request contribution cards in your GitHub Actions workflow, automatically commit them to your profile repository, and embed them directly from there.
 Run the action on a schedule to dynamically update your profile with your latest contribution stats.
 
 ## Quick start
@@ -58,6 +58,7 @@ For more advanced options see the [Examples](#examples) section as well as the [
 
 ## Inputs
 
+- `card`: Card type to generate. Supported values are `stats` and `prs`.
 - `options`: Card options as a query string (`key=value&...`) or JSON. If `username` is omitted, the action uses the repository owner.
 - `path`: Output path for the SVG file. Defaults to `profile/<card>.svg`. For the `prs` card this is a filename prefix (one SVG per organisation).
 - `token`: GitHub token (PAT or `GITHUB_TOKEN`). For private repo stats, use a [PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `repo` and `read:user` scopes.
@@ -87,6 +88,16 @@ Please refer to their documentation for usage and examples; see also [Disclaimer
 | `exclude`       | Comma-separated repo name substrings to exclude |
 
 ## Examples
+
+### Stats card
+
+```yaml
+with:
+  card: stats
+  options: username=octocat&show_icons=true
+  path: profile/stats.svg
+  token: ${{ secrets.GITHUB_TOKEN }}
+```
 
 ### PRs card
 

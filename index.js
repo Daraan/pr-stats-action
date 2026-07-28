@@ -1,4 +1,5 @@
 import core from "@actions/core";
+import { api as renderStatsCard } from "@stats-organization/github-readme-stats-core";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -91,6 +92,7 @@ const validateCardOptions = (card, query, repoOwner) => {
     core.warning("username not provided; defaulting to repository owner.");
   }
   switch (card) {
+    case "stats":
     case "prs":
       if (!query.username) {
         throw new Error(`username is required for the ${card} card.`);
@@ -115,6 +117,23 @@ const run = async () => {
   }
 
   validateCardOptions(card, query, process.env.GITHUB_REPOSITORY_OWNER);
+
+  if (card === "stats") {
+    const outputPathValue = outputPathInput || path.join("profile", "stats.svg");
+    const outputPath = path.resolve(process.cwd(), outputPathValue);
+    const result = await renderStatsCard(query);
+    const svg = result?.content;
+
+    if (!svg) {
+      throw new Error("Card renderer returned empty output.");
+    }
+
+    await mkdir(path.dirname(outputPath), { recursive: true });
+    await writeFile(outputPath, svg, "utf8");
+    core.info(`Wrote ${outputPath}`);
+    core.setOutput("path", outputPathValue);
+    return;
+  }
 
   // ---- PRs card: custom flow that produces one SVG per organisation ----
   if (card === "prs") {

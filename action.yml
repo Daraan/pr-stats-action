@@ -3,7 +3,7 @@ description: Generate stat card images about merged PR in GitHub Actions (aggreg
 author: readme-tools
 inputs:
   card:
-    description: Card type to generate (prs).
+    description: Card type to generate (stats or prs).
     required: false
     default: prs
   options:
