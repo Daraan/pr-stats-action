@@ -99,6 +99,16 @@ with:
   token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+Profile image rank icon example:
+
+```yaml
+with:
+  card: stats
+  options: username=octocat&show_icons=true&rank_icon=profile
+  path: profile/stats.svg
+  token: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### PRs card
 
 Using individual key inputs (recommended):
@@ -153,6 +163,8 @@ The `prs` card supports the same theme and colour options (`theme`, `title_color
 Use `exclude` with a comma-separated list (e.g. `exclude=pydantic,foo`) to skip repos containing those terms.
 
 The `custom_images` input lets you override the avatar shown in PR cards for specific repositories or organizations. The action will check for a custom image in this order: full repo name (`owner/repo`), short repo name (`repo`), then org/user name. If no match is found, it falls back to the default avatar.
+
+For `card: stats`, `rank_icon=profile` is an action-specific extension. It renders the user's GitHub profile image in the rank circle instead of the default rank/octocat icon.
 
 ## How to Use in your README.md
 

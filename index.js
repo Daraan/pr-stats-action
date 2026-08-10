@@ -10,6 +10,7 @@ import {
   parseIncludeList,
   parseCustomImages,
 } from "./prs.js";
+import { fetchAvatarDataUri, injectProfileIcon } from "./stats-profile-icon.js";
 
 /**
  * Normalize option values to strings.
@@ -119,13 +120,25 @@ const run = async () => {
   validateCardOptions(card, query, process.env.GITHUB_REPOSITORY_OWNER);
 
   if (card === "stats") {
-    const outputPathValue = outputPathInput || path.join("profile", "stats.svg");
+    const outputPathValue =
+      outputPathInput || path.join("profile", "stats.svg");
     const outputPath = path.resolve(process.cwd(), outputPathValue);
+
+    const useProfileIcon = query.rank_icon === "profile";
+    if (useProfileIcon) {
+      query.rank_icon = "github";
+    }
+
     const result = await renderStatsCard(query);
-    const svg = result?.content;
+    let svg = result?.content;
 
     if (!svg) {
       throw new Error("Card renderer returned empty output.");
+    }
+
+    if (useProfileIcon) {
+      const dataUri = await fetchAvatarDataUri(query.username);
+      svg = injectProfileIcon(svg, dataUri, query.username);
     }
 
     await mkdir(path.dirname(outputPath), { recursive: true });
