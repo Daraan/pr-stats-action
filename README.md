@@ -70,22 +70,25 @@ For more advanced options see the [Examples](#examples) section as well as the [
     owner/OtherRepo: https://example.com/other-logo.svg
   ```
 
+- `repositories_contributed_to_scope`: Scope used for the stats card's "Contributed to" value. Supported values: `last-year` (default; existing behavior) and `all-time`.
+
 Options can also be provided as individual inputs directly in the `with:` block. These take priority over the same keys in `options`.
 Style and theme settings of [github-stats-extended](https://github.com/stats-organization/github-stats-extended) are supported.
 Please refer to their documentation for usage and examples; see also [Disclaimer](#disclaimer).
 
-| Input           | Description                                     |
-| --------------- | ----------------------------------------------- |
-| `username`      | GitHub username                                 |
-| `theme`         | Card theme name                                 |
-| `title_color`   | Title hex color (without `#`)                   |
-| `text_color`    | Text hex color (without `#`)                    |
-| `icon_color`    | Icon hex color (without `#`)                    |
-| `bg_color`      | Background hex color (without `#`)              |
-| `border_color`  | Border hex color (without `#`)                  |
-| `hide_border`   | Hide the card border (`true`/`false`)           |
-| `border_radius` | Card border radius                              |
-| `exclude`       | Comma-separated repo name substrings to exclude |
+| Input                               | Description                                                                         |
+| ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `username`                          | GitHub username                                                                     |
+| `theme`                             | Card theme name                                                                     |
+| `title_color`                       | Title hex color (without `#`)                                                       |
+| `text_color`                        | Text hex color (without `#`)                                                        |
+| `icon_color`                        | Icon hex color (without `#`)                                                        |
+| `bg_color`                          | Background hex color (without `#`)                                                  |
+| `border_color`                      | Border hex color (without `#`)                                                      |
+| `hide_border`                       | Hide the card border (`true`/`false`)                                               |
+| `border_radius`                     | Card border radius                                                                  |
+| `exclude`                           | Comma-separated repo name substrings to exclude                                     |
+| `repositories_contributed_to_scope` | Stats card contribution repository count scope: `last-year` (default) or `all-time` |
 
 ## Examples
 
@@ -95,6 +98,28 @@ Please refer to their documentation for usage and examples; see also [Disclaimer
 with:
   card: stats
   options: username=octocat&show_icons=true
+  path: profile/stats.svg
+  token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Stats card with default contribution scope (`last-year`):
+
+```yaml
+with:
+  card: stats
+  username: octocat
+  repositories_contributed_to_scope: last-year
+  path: profile/stats.svg
+  token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Stats card with all-time contribution scope:
+
+```yaml
+with:
+  card: stats
+  username: octocat
+  repositories_contributed_to_scope: all-time
   path: profile/stats.svg
   token: ${{ secrets.GITHUB_TOKEN }}
 ```

@@ -11,6 +11,12 @@ import {
   parseCustomImages,
 } from "./prs.js";
 import { fetchAvatarDataUri, injectProfileIcon } from "./stats-profile-icon.js";
+import {
+  CONTRIBUTED_REPOS_SCOPE,
+  normalizeContributionScope,
+  fetchAllTimeContributedRepositoryCount,
+  updateContributedReposInStatsSvg,
+} from "./stats-contribution-scope.js";
 
 /**
  * Normalize option values to strings.
@@ -78,6 +84,7 @@ const OPTION_KEYS = [
   "border_radius",
   "exclude",
   "includes",
+  "repositories_contributed_to_scope",
 ];
 
 /**
@@ -120,6 +127,9 @@ const run = async () => {
   validateCardOptions(card, query, process.env.GITHUB_REPOSITORY_OWNER);
 
   if (card === "stats") {
+    const contributedReposScope = normalizeContributionScope(
+      query.repositories_contributed_to_scope,
+    );
     const outputPathValue =
       outputPathInput || path.join("profile", "stats.svg");
     const outputPath = path.resolve(process.cwd(), outputPathValue);
@@ -139,6 +149,18 @@ const run = async () => {
     if (useProfileIcon) {
       const dataUri = await fetchAvatarDataUri(query.username);
       svg = injectProfileIcon(svg, dataUri, query.username);
+    }
+
+    if (contributedReposScope === CONTRIBUTED_REPOS_SCOPE.ALL_TIME) {
+      const contributedRepoCount = await fetchAllTimeContributedRepositoryCount(
+        query.username,
+        process.env.PAT_1,
+      );
+      svg = updateContributedReposInStatsSvg(
+        svg,
+        contributedRepoCount,
+        contributedReposScope,
+      );
     }
 
     await mkdir(path.dirname(outputPath), { recursive: true });
