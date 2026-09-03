@@ -70,7 +70,7 @@ For more advanced options see the [Examples](#examples) section as well as the [
     owner/OtherRepo: https://example.com/other-logo.svg
   ```
 
-- `repositories_contributed_to_scope`: Scope used for the stats card's "Contributed to" value. Supported values: `last-year` (default; existing behavior) and `all-time`.
+- `repositories_contributed_to_scope`: Scope used for the stats card's "Contributed to" value. Supported values: `last-year` (default; existing behavior) and `all-time`. `all-time` counts unique repositories contributed to (commits, issues, pull requests, repository creations) across every year of the account, excluding the user's own and private repositories. It needs a token and issues one API request per contribution year.
 
 Options can also be provided as individual inputs directly in the `with:` block. These take priority over the same keys in `options`.
 Style and theme settings of [github-stats-extended](https://github.com/stats-organization/github-stats-extended) are supported.
