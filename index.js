@@ -147,10 +147,12 @@ const run = async () => {
     }
 
     if (useProfileIcon) {
+      core.debug(`Changing SVG to user-profile image.`);
       const dataUri = await fetchAvatarDataUri(query.username);
       svg = injectProfileIcon(svg, dataUri, query.username);
     }
 
+    core.debug(`Fetch all time contributions: ${contributedReposScope}, matches ${CONTRIBUTED_REPOS_SCOPE.ALL_TIME}: ${contributedReposScope === CONTRIBUTED_REPOS_SCOPE.ALL_TIME}`);
     if (contributedReposScope === CONTRIBUTED_REPOS_SCOPE.ALL_TIME) {
       const token = process.env.PAT_1;
       if (!token) {
