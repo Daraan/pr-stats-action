@@ -126,7 +126,7 @@ const fetchAllTimeContributedRepositoryCount = async (username, token) => {
 
   for (const year of years) {
     const from = `${year}-01-01T00:00:00Z`;
-    const to = `${year}-12-31T23:59:59Z`;
+    const to = `${year}-12-31T23:59:59.999Z`;
     const yearData = await postGraphql(token, CONTRIBUTIONS_BY_YEAR_QUERY, {
       login: username,
       from,
@@ -151,25 +151,52 @@ const fetchAllTimeContributedRepositoryCount = async (username, token) => {
   return repositories.size;
 };
 
+const CONTRIBS_VALUE_PATTERN =
+  /(<text[^>]*data-testid="contribs"[^>]*>)([^<]*)(<\/text>)/;
+
+// The label `<text>` node sits directly before the value node in the same
+// group, so it gives us the localized label without hard-coding English.
+const CONTRIBS_LABEL_PATTERN =
+  /<text[^>]*>([^<]*)<\/text>\s*(?:<\/a>\s*<a[^>]*>\s*)?<text[^>]*data-testid="contribs"/;
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const ALL_TIME_LABEL_SUFFIX = "(all time)";
+
+const relabelAllTime = (label) => {
+  if (/\([^()]*\)/.test(label)) {
+    return label.replace(/\([^()]*\)/, ALL_TIME_LABEL_SUFFIX);
+  }
+  return `${label} ${ALL_TIME_LABEL_SUFFIX}`;
+};
+
 const updateContributedReposInStatsSvg = (svg, count, scope) => {
   if (scope !== CONTRIBUTED_REPOS_SCOPE.ALL_TIME) {
     return svg;
   }
 
-  // The count shows up twice: in the visible `<text>` node and in the
-  // `<desc>` accessibility summary ("Contributed to (last year): 12").
-  const updatedCount = svg
-    .replace(
-      /(<text[^>]*data-testid="contribs"[^>]*>)([^<]*)(<\/text>)/,
-      `$1${count}$3`,
-    )
-    .replace(/(Contributed to \(last year\):\s*)(\d+)/g, `$1${count}`);
+  // The visible value node is locale independent; patch it first.
+  let updated = svg.replace(CONTRIBS_VALUE_PATTERN, `$1${count}$3`);
 
-  // Global: the label appears in both the `<desc>` summary and the card body.
-  return updatedCount.replace(
-    /(Contributed to) \(last year\)/g,
-    "$1 (all time)",
+  // The same label and count appear once more in the `<desc>` accessibility
+  // summary ("Contributed to (last year): 12"). The label is localized, so it
+  // is read back off the card instead of being matched as an English literal.
+  const label = svg.match(CONTRIBS_LABEL_PATTERN)?.[1]?.replace(/:\s*$/, "");
+
+  if (!label) {
+    return updated;
+  }
+
+  const escaped = escapeRegExp(label);
+
+  updated = updated.replace(
+    new RegExp(`(${escaped}:\\s*)\\d+`, "g"),
+    `$1${count}`,
   );
+
+  const allTimeLabel = relabelAllTime(label);
+
+  return updated.replace(new RegExp(escaped, "g"), () => allTimeLabel);
 };
 
 export {

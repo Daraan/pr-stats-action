@@ -62,6 +62,26 @@ describe("updateContributedReposInStatsSvg", () => {
     expect(result.match(/Contributed to \(all time\)/g)).toHaveLength(2);
     expect(result).not.toContain(">12</text>");
   });
+
+  test("updates a localized card without matching English literals", () => {
+    const germanSvg = `<svg><desc>Sterne insgesamt: 5, Beigetragen zu (letztes Jahr): 12</desc><text class="stat" x="25" y="12.5">Beigetragen zu (letztes Jahr):</text><text
+        class="stat"
+        x="224.01"
+        y="12.5"
+        data-testid="contribs"
+      >12</text></svg>`;
+
+    const result = updateContributedReposInStatsSvg(
+      germanSvg,
+      123,
+      CONTRIBUTED_REPOS_SCOPE.ALL_TIME,
+    );
+
+    expect(result).not.toContain("letztes Jahr");
+    expect(result).toContain(">123</text>");
+    expect(result).toContain("Beigetragen zu (all time): 123");
+    expect(result.match(/Beigetragen zu \(all time\)/g)).toHaveLength(2);
+  });
 });
 
 describe("fetchAllTimeContributedRepositoryCount", () => {
