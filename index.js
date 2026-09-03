@@ -152,10 +152,15 @@ const run = async () => {
     }
 
     if (contributedReposScope === CONTRIBUTED_REPOS_SCOPE.ALL_TIME) {
+      const token = process.env.PAT_1;
+      if (!token) {
+        throw new Error("GitHub token (PAT_1) is required for all-time contribution scope.");
+      }
       const contributedRepoCount = await fetchAllTimeContributedRepositoryCount(
         query.username,
-        process.env.PAT_1,
+        token,
       );
+      core.debug(`All-time contributed repo count: ${contributedRepoCount}`);
       svg = updateContributedReposInStatsSvg(
         svg,
         contributedRepoCount,
