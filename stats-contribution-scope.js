@@ -13,24 +13,34 @@ const CONTRIBUTION_YEARS_QUERY = `
   }
 `;
 
+const REPO_FIELDS = `
+  repository {
+    nameWithOwner
+    isPrivate
+    owner { login }
+  }
+`;
+
+// Mirrors the contribution types used by the core card's
+// `repositoriesContributedTo(contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY])`,
+// but evaluated year by year so the result covers the full account history.
 const CONTRIBUTIONS_BY_YEAR_QUERY = `
   query($login: String!, $from: DateTime!, $to: DateTime!) {
     user(login: $login) {
       contributionsCollection(from: $from, to: $to) {
         commitContributionsByRepository(maxRepositories: 100) {
-          repository { nameWithOwner }
+          ${REPO_FIELDS}
         }
         issueContributionsByRepository(maxRepositories: 100) {
-          repository { nameWithOwner }
+          ${REPO_FIELDS}
         }
         pullRequestContributionsByRepository(maxRepositories: 100) {
-          repository { nameWithOwner }
+          ${REPO_FIELDS}
         }
-        pullRequestReviewContributionsByRepository(maxRepositories: 100) {
-          repository { nameWithOwner }
-        }
-        repositoryContributionsByRepository(maxRepositories: 100) {
-          repository { nameWithOwner }
+        repositoryContributions(first: 100) {
+          nodes {
+            ${REPO_FIELDS}
+          }
         }
       }
     }
@@ -83,9 +93,21 @@ const normalizeContributionScope = (scope) => {
   );
 };
 
-const collectRepoNames = (bucket = []) => {
-  return bucket
-    .map((entry) => entry?.repository?.nameWithOwner)
+/**
+ * Collect repository names from a contributions bucket, applying the same
+ * exclusions as the core card's `repositoriesContributedTo` field: repositories
+ * owned by the user and private repositories do not count.
+ */
+const collectRepoNames = (bucket, username) => {
+  const entries = Array.isArray(bucket) ? bucket : [];
+  const login = username?.toLowerCase();
+
+  return entries
+    .map((entry) => entry?.repository)
+    .filter(Boolean)
+    .filter((repo) => !repo.isPrivate)
+    .filter((repo) => repo.owner?.login?.toLowerCase() !== login)
+    .map((repo) => repo.nameWithOwner)
     .filter(Boolean);
 };
 
@@ -116,12 +138,11 @@ const fetchAllTimeContributedRepositoryCount = async (username, token) => {
       collection?.commitContributionsByRepository,
       collection?.issueContributionsByRepository,
       collection?.pullRequestContributionsByRepository,
-      collection?.pullRequestReviewContributionsByRepository,
-      collection?.repositoryContributionsByRepository,
+      collection?.repositoryContributions?.nodes,
     ];
 
     for (const bucket of buckets) {
-      for (const name of collectRepoNames(bucket)) {
+      for (const name of collectRepoNames(bucket, username)) {
         repositories.add(name);
       }
     }
@@ -135,13 +156,18 @@ const updateContributedReposInStatsSvg = (svg, count, scope) => {
     return svg;
   }
 
-  const updatedCount = svg.replace(
-    /(<text[^>]*data-testid="contribs"[^>]*>)([^<]*)(<\/text>)/,
-    `$1${count}$3`,
-  );
+  // The count shows up twice: in the visible `<text>` node and in the
+  // `<desc>` accessibility summary ("Contributed to (last year): 12").
+  const updatedCount = svg
+    .replace(
+      /(<text[^>]*data-testid="contribs"[^>]*>)([^<]*)(<\/text>)/,
+      `$1${count}$3`,
+    )
+    .replace(/(Contributed to \(last year\):\s*)(\d+)/g, `$1${count}`);
 
+  // Global: the label appears in both the `<desc>` summary and the card body.
   return updatedCount.replace(
-    /(Contributed to) \(last year\)/,
+    /(Contributed to) \(last year\)/g,
     "$1 (all time)",
   );
 };

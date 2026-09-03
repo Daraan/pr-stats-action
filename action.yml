@@ -63,9 +63,9 @@ inputs:
     required: false
     default: ""
   repositories_contributed_to_scope:
-    description: Contribution repository count scope for stats card (`last-year` or `all-time`). Overrides `repositories_contributed_to_scope` in options.
+    description: Contribution repository count scope for stats card (`last-year` or `all-time`). Overrides `repositories_contributed_to_scope` in options. Leave empty to use the value from `options` (falls back to `last-year`).
     required: false
-    default: "last-year"
+    default: ""
   custom_images:
     description: >
       Custom image URLs for specific repositories, overriding the default owner
